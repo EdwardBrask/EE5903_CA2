@@ -1,13 +1,12 @@
-import string
 from task import Task
 from algo_1 import NIRR
 
 # Will always be reverse sorted after arrival time. 
 # Task number and arrival time need to match, 
 # The first task must have arrival time = 0 
-task_dataset = [Task(1, 0, 75), Task(2, 2, 95), Task(3, 8, 65), Task(4, 14, 115), Task(5, 20, 35)]
+task_dataset = [Task(5, 20, 35), Task(4, 14, 115), Task(3, 8, 65), Task(2, 2, 95), Task(1, 0, 75)]
 
-def calculate_and_print_results(algo_name: string, results: list, CS, n_calcs: int, by_task=False) -> None:
+def calculate_and_print_results(algo_name: str, results: list, CS, n_calcs: int, by_task=False) -> None:
     ART = 0; AWT = 0; ATT = 0
     for done_task in results:
         ART += done_task.response_time; AWT += done_task.waiting_time; ATT += done_task.turnaround_time
