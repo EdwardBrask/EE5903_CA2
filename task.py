@@ -8,6 +8,9 @@ class Task:
         self.waiting_time = 0
         self.turnaround_time = 0
     
+    def __repr__(self) -> str:
+        return f'T_{self.data[0]}({self.data[1]}, {self.data[2]})'
+    
     def get_id(self) -> int: 
         return self.data[0]
     

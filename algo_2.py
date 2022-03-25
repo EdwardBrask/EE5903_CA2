@@ -1,6 +1,8 @@
+from copy import deepcopy
 import numpy as np
 
-def NIRR(task_dataset: list):
+def NIRR(dataset: list):
+    task_dataset = deepcopy(dataset)
     ARRIVE_QUEUE = list()
     REQUEST_QUEUE = list()
     DONE_LIST = list()

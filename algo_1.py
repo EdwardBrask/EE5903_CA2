@@ -1,4 +1,7 @@
-def IDRR(task_dataset: list):
+from copy import deepcopy
+
+def IDRR(dataset: list):
+    task_dataset = deepcopy(dataset)
     REQUEST_QUEUE = list()
     DONE_LIST = list()
 
@@ -52,17 +55,20 @@ def IDRR(task_dataset: list):
                     break
                 
             # Calculate the quantum time
-            REQUEST_QUEUE.sort(key=lambda TASK: TASK.get_remaining_burst_time(), reverse=True)
-            number_of_QT_calculations += 1
-            if len(REQUEST_QUEUE) == 1:
+            if len(REQUEST_QUEUE) == 0:
+                break 
+            elif len(REQUEST_QUEUE) == 1:
                 QT = REQUEST_QUEUE[0].get_burst_time()
-            elif FIRST_QT:
-                TEMP = sorted(REQUEST_QUEUE, key=lambda TASK: TASK.get_arrival_time())
-                QT = round(REQUEST_QUEUE[0].get_remaining_burst_time() + QT)/2 - round(TEMP[0].get_arrival_time() + TEMP[1].get_arrival_time())/2
-                FIRST_QT = False
             else:
-                TEMP = sorted(REQUEST_QUEUE, key=lambda TASK: TASK.get_arrival_time())
-                QT = round(REQUEST_QUEUE[0].get_remaining_burst_time() + QT)/2 - round(TEMP[0].get_arrival_time()/2)
+                REQUEST_QUEUE.sort(key=lambda TASK: TASK.get_remaining_burst_time(), reverse=True)
+                number_of_QT_calculations += 1
+                if FIRST_QT:
+                    TEMP = sorted(REQUEST_QUEUE, key=lambda TASK: TASK.get_arrival_time())
+                    QT = round(REQUEST_QUEUE[0].get_remaining_burst_time() + QT)/2 - round(TEMP[0].get_arrival_time() + TEMP[1].get_arrival_time())/2
+                    FIRST_QT = False
+                else:
+                    TEMP = sorted(REQUEST_QUEUE, key=lambda TASK: TASK.get_arrival_time())
+                    QT = round(REQUEST_QUEUE[0].get_remaining_burst_time() + QT)/2 - round(TEMP[0].get_arrival_time()/2)
                 
     
     CS -= 1  # It never switches from the last task...
