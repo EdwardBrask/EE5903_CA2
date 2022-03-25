@@ -1,4 +1,5 @@
 import numpy as np
+from time import time
 import matplotlib.pyplot as plt
 from random import random
 from algo_1 import IDRR
@@ -88,6 +89,8 @@ def calculate_results(algo_name: str, results: list, CS, NOQTC: int, print_resul
     return ART, AWT, ATT
 
 def simulate_and_plot(N_tasks, interval, task_dataset, IDRR_to_txt=True, NIRR_to_txt=True, plot_ART=True, plot_AWT=True, plot_CS=True, plot_NOQTC=True):
+    time_start = time()
+    print(f'Starting simulation with {N_tasks} tasks, evaluated at every {interval} number of tasks.')
     number_of_tasks = np.linspace(interval, N_tasks, int(N_tasks/interval))
 
     IDRR_art = list(); IDRR_awt = list(); IDRR_cs = list(); IDRR_noqtc = list(); 
@@ -123,7 +126,8 @@ def simulate_and_plot(N_tasks, interval, task_dataset, IDRR_to_txt=True, NIRR_to
         plt.title("IDRR vs. NIRR")
         plt.xlabel('Number of tasks')
         plt.ylabel('ART')
-        plt.show()
+        plt.savefig('ART.png')
+        plt.close()
     
     if plot_AWT:
         plt.plot(number_of_tasks, IDRR_awt, 'b--', label='IDRR - AWT', linewidth=2)
@@ -132,7 +136,8 @@ def simulate_and_plot(N_tasks, interval, task_dataset, IDRR_to_txt=True, NIRR_to
         plt.title("IDRR vs. NIRR")
         plt.xlabel('Number of tasks')
         plt.ylabel('AWT')
-        plt.show()
+        plt.savefig('AWT.png')
+        plt.close()
 
     if plot_CS:
         plt.plot(number_of_tasks, IDRR_cs, 'b--', label='IDRR - CS', linewidth=2)
@@ -141,13 +146,21 @@ def simulate_and_plot(N_tasks, interval, task_dataset, IDRR_to_txt=True, NIRR_to
         plt.title("IDRR vs. NIRR")
         plt.xlabel('Number of tasks')
         plt.ylabel('CS')
-        plt.show()
+        plt.savefig('CS.png')
+        plt.close()
     
     if plot_NOQTC:
         plt.plot(number_of_tasks, IDRR_noqtc, 'b--', label='IDRR - NOQTC', linewidth=2)
         plt.plot(number_of_tasks, NIRR_noqtc, 'k--', label='NIRR - NOQTC', linewidth=2)
+        plt.ylim([0, max(IDRR_noqtc)+5])
         plt.legend()
         plt.title("IDRR vs. NIRR")
         plt.xlabel('Number of tasks')
         plt.ylabel('NOQTC')
-        plt.show()
+        plt.savefig('NOQTC.png')
+        plt.close()
+    
+    time_end = time()
+    print(f'Simulation finisehd in {time_end - time_start:.2f} seconds!!')
+    
+    
