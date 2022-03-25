@@ -1,4 +1,5 @@
 from copy import deepcopy
+from logging import exception
 
 def IDRR(dataset: list):
     task_dataset = deepcopy(dataset)
@@ -6,7 +7,7 @@ def IDRR(dataset: list):
     DONE_LIST = list()
 
     # Adding the first arrived task with arrival time 0 (from the back!)
-    while (task_dataset[-1].get_arrival_time() == 0):
+    while len(task_dataset) != 0 and task_dataset[-1].get_arrival_time() == 0:
         REQUEST_QUEUE.append(task_dataset.pop())
 
     QT = 0; TIME = 0; CS = 0; number_of_QT_calculations = 0; FIRST_QT = True; NEW_ROUND = False
@@ -26,8 +27,7 @@ def IDRR(dataset: list):
 
         # CPU allocation
         # print('[CPU] Allocating task: ', current_task.get_id(), 'QT: ', QT, 'TIME: ', TIME)
-        TIME += current_task.allocate_to_CPU(TIME, QT)
-        CS += 1
+        TIME += current_task.allocate_to_CPU(TIME, QT); CS += 1
         if current_task.get_remaining_burst_time() == 0:  # Finished?
             current_task.is_finished(TIME)
             DONE_LIST.append(current_task)
@@ -58,7 +58,8 @@ def IDRR(dataset: list):
             if len(REQUEST_QUEUE) == 0:
                 break 
             elif len(REQUEST_QUEUE) == 1:
-                QT = REQUEST_QUEUE[0].get_burst_time()
+                number_of_QT_calculations += 1
+                QT = REQUEST_QUEUE[0].get_remaining_burst_time()
             else:
                 REQUEST_QUEUE.sort(key=lambda TASK: TASK.get_remaining_burst_time(), reverse=True)
                 number_of_QT_calculations += 1
@@ -69,7 +70,10 @@ def IDRR(dataset: list):
                 else:
                     TEMP = sorted(REQUEST_QUEUE, key=lambda TASK: TASK.get_arrival_time())
                     QT = round(REQUEST_QUEUE[0].get_remaining_burst_time() + QT)/2 - round(TEMP[0].get_arrival_time()/2)
-                
-    
+        
+        # Edge case, but can happen even with a reasonable dataset 
+        if QT <= 0:
+            raise ValueError(f'[IDRR] QT calculated to: {QT}')
+        
     CS -= 1  # It never switches from the last task...
     return DONE_LIST, CS, number_of_QT_calculations

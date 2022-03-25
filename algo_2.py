@@ -8,7 +8,7 @@ def NIRR(dataset: list):
     DONE_LIST = list()
 
     # Adding the first arrived task with arrival time 0 (from the back!)
-    while (task_dataset[-1].get_arrival_time() == 0):
+    while len(task_dataset) != 0 and task_dataset[-1].get_arrival_time() == 0:
         ARRIVE_QUEUE.append(task_dataset.pop())
 
     QT = 0; TIME = 0; CS = 0; number_of_QT_calculations = 0
