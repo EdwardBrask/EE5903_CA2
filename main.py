@@ -1,5 +1,7 @@
+from copy import deepcopy
 from task import Task
-from algo_1 import NIRR
+from algo_1 import IDRR
+from algo_2 import NIRR
 
 # Will always be reverse sorted after arrival time. 
 # Task number and arrival time need to match, 
@@ -20,7 +22,13 @@ def calculate_and_print_results(algo_name: str, results: list, CS, n_calcs: int,
                 f'\n-RT: {done_task.response_time},',
                 f' -WT: {done_task.waiting_time},',
                 f' -TT: {done_task.turnaround_time},')
+    print('\n')
 
 if __name__ == "__main__":
-    [NIRR_RESULTS, NIRR_CS, n_calcs] = NIRR(task_dataset)
+    IDRR_tasks = deepcopy(task_dataset)
+    [IDRR_RESULTS, IDRR_CS, n_calcs] = IDRR(IDRR_tasks)
+    calculate_and_print_results('IDRR', IDRR_RESULTS, IDRR_CS, n_calcs)
+
+    NIRR_tasks = deepcopy(task_dataset)
+    [NIRR_RESULTS, NIRR_CS, n_calcs] = NIRR(NIRR_tasks)
     calculate_and_print_results('NIRR', NIRR_RESULTS, NIRR_CS, n_calcs)
