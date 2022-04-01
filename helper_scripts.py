@@ -1,9 +1,7 @@
 import numpy as np
-from time import time
 import matplotlib.pyplot as plt
 from random import random
-
-from sympy import N
+from time import time
 from algo_1 import IDRR
 from algo_2 import NIRR
 
