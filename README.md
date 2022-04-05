@@ -1,11 +1,11 @@
 # EE5903_CA2
-This is the project repo for the implementation, simulation adn analysis of two imprevoed Round RObin CPU scheduling algorithms, called Improved Dynamic RR and New Improved RR.
+This is the project repo for the implementation, simulation and analysis of two improved Round Robin CPU scheduling algorithms, called Improved Dynamic RR and a New Improved RR.
 
 Installation procedure/requirements
-    - This project is based on python3.8, but any 3.x should work fine. There is a requirements.txt file included with what I currently have, but the inly packages used are numpy and matplotlib which are very standard. In general it should just be plug and play. 
+    - This project is built on python3.8, but any 3.x should work fine. There is a requirements.txt file included with what I currently have, but the inly packages used are numpy and matplotlib which are very standard. In general it should just be plug and play. 
 
 Running instructions
-    - Everything is executed from the main.py file, where all the relevent arguments to the simulate function are listed. Below each of the parameters are listed with what they do adn the recommended values. 
+    - Everything is executed from the main.py file, where all the relevent arguments to the simulate function are listed. Below each of the parameters are listed with what they do and the recommended values. 
 
     Parameters:
         N_simulations (int): The number of simulations to be carried out consecutively, hence also the number of lines for each algo on every plot. Recommended range - [1, 5]
