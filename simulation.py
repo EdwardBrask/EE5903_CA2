@@ -122,7 +122,7 @@ def simulate(N_simulations: int, N_tasks: int, interval: int, arrival_time_bound
         plt.title(f'Ar_t = [{arrival_time_bounds[0]}, {arrival_time_bounds[1]}], B_t = [{burst_time_bounds[0]}, {burst_time_bounds[1]}]')
         plt.xlabel('Number of tasks')
         plt.ylabel('ART')
-        plt.savefig(os.path.join(plots_path, 'ART.png'), bbox_inches='tight')
+        plt.savefig(os.path.join(plots_path, 'ART_3.png'), bbox_inches='tight')
         plt.close()
     
     if plot_AWT:
@@ -137,7 +137,7 @@ def simulate(N_simulations: int, N_tasks: int, interval: int, arrival_time_bound
         plt.title(f'Ar_t = [{arrival_time_bounds[0]}, {arrival_time_bounds[1]}], B_t = [{burst_time_bounds[0]}, {burst_time_bounds[1]}]')
         plt.xlabel('Number of tasks')
         plt.ylabel('AWT')
-        plt.savefig(os.path.join(plots_path, 'AWT.png'), bbox_inches='tight')
+        plt.savefig(os.path.join(plots_path, 'AWT_3.png'), bbox_inches='tight')
         plt.close()
 
     if plot_CS:
@@ -152,7 +152,7 @@ def simulate(N_simulations: int, N_tasks: int, interval: int, arrival_time_bound
         plt.title(f'Ar_t = [{arrival_time_bounds[0]}, {arrival_time_bounds[1]}], B_t = [{burst_time_bounds[0]}, {burst_time_bounds[1]}]')
         plt.xlabel('Number of tasks')
         plt.ylabel('CS')
-        plt.savefig(os.path.join(plots_path, 'CS.png'), bbox_inches='tight')
+        plt.savefig(os.path.join(plots_path, 'CS_3.png'), bbox_inches='tight')
         plt.close()
     
     if plot_NOQTC:
@@ -165,12 +165,12 @@ def simulate(N_simulations: int, N_tasks: int, interval: int, arrival_time_bound
             else:
                 plt.plot(number_of_tasks, IDRR_NOQTC[n], 'b--', linewidth=2)
                 plt.plot(number_of_tasks, NIRR_NOQTC[n], 'k--', linewidth=2)    
-        plt.ylim([0, ylim_max+9])
+        plt.ylim([0, ylim_max+3])
         plt.legend(loc = 'upper left')
         plt.title(f'Ar_t = [{arrival_time_bounds[0]}, {arrival_time_bounds[1]}], B_t = [{burst_time_bounds[0]}, {burst_time_bounds[1]}]')
         plt.xlabel('Number of tasks')
         plt.ylabel('NOQTC')
-        plt.savefig(os.path.join(plots_path, 'NOQTC.png'), bbox_inches='tight')
+        plt.savefig(os.path.join(plots_path, 'NOQTC_3.png'), bbox_inches='tight')
         plt.close()
     
     time_end = time()

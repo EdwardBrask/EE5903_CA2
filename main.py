@@ -8,7 +8,7 @@ interval = 10 # Which interval should be used to calculate the results? Recommen
 
 # Task generation
 # Should be noted here that the IDRR algorithm can generate a quantum time = 0, then the code throws an ValueError and terminates.
-arrival_time_bounds = [0, 10]; burst_time_bounds = [1, 50] # In which interval should the arrival times and burst times be generated? 
+arrival_time_bounds = [0, 20]; burst_time_bounds = [30, 100] # In which interval should the arrival times and burst times be generated? 
 
 # Output forms 
 IDRR_to_txt=True; NIRR_to_txt=True; # Want the results to be written to .txt files?
