@@ -1,14 +1,10 @@
-import numpy as np
-import matplotlib.pyplot as plt
 from random import random
-from time import time
-from algo_1 import IDRR
-from algo_2 import NIRR
 
 class Task:
     """
-    This is the classs that handles the updates and calculations
-    of allocating a task to the CPU and the calculating the relevant metrices.
+    This is the Task class that simulates what happens to a task in the RR algorithms. 
+    This class handles the updates and calculations of allocating a 
+    task to the CPU and the calculating the relevant performance metrices.
     """
     def __init__(self, id=int, arrival_time=int, burst_time=int):
         self.data = [id, arrival_time, burst_time]
@@ -55,15 +51,16 @@ class Task:
         self.finish_time = time
         self.calculate_results()
 
-def generate_dataset(N_repetitions: int, N_tasks: int, ART_bound: list, BT_bound: list) -> list:
+def generate_dataset(N_simulations: int, N_tasks: int, ART_bound: list, BT_bound: list) -> list:
     """
     This function generates the dataset, which will be a list of the class Tasks. 
-    It tales the number of simulations, number of tasks, and the arrival time burst time bounds 
-    and outputs random Task(ART, BT). The tasks will always be in reverse sorted after arrival time, 
-    where the task number and arrival time need to match. The first Task is forced to have 0 arrival time. 
+    It takes the number of simulations, number of tasks, and the arrival time burst time bounds 
+    and outputs random Task(ART, BT). The tasks will always be in reverse sorted order after arrival time, 
+    where the task number and arrival time need to match. The first Tasks for each number of simulation
+    (hence being last in the list) is forced to have 0 arrival time. 
     """
     OUTPUT = list()
-    for _ in range(0, N_repetitions):
+    for _ in range(0, N_simulations):
         arrival_times = list()
         tasks_n = list()
         for _ in range(N_tasks):
@@ -102,117 +99,3 @@ def calculate_results(algo_name: str, results: list, CS, NOQTC: int, print_resul
                 f' -TT: {done_task.turnaround_time},')
 
     return ART, AWT, ATT
-
-def simulate_and_plot(N_repetitions: int, N_tasks: int, interval: int, task_dataset: list, IDRR_to_txt=True, NIRR_to_txt=True, plot_ART=True, plot_AWT=True, plot_CS=True, plot_NOQTC=True):
-    """
-    This function is the main function of the simulation code. It takes the dataset generated earlier and runs both algorithms, 
-    calculates the results and writes it to .txt files and/or plots them. 
-    """
-    time_start = time()
-    print(f'Starting {N_repetitions} simulation(s), with {N_tasks} tasks each, evaluated at every {interval} number of tasks.')
-    number_of_tasks = np.linspace(interval, N_tasks, int(N_tasks/interval))
-
-    IDRR_art = list(); IDRR_awt = list(); IDRR_cs = list(); IDRR_noqtc = list(); 
-    NIRR_art = list(); NIRR_awt = list(); NIRR_cs = list(); NIRR_noqtc = list(); 
-
-
-    for n in range(0, N_repetitions):
-        idrr_art = list(); idrr_awt = list(); idrr_cs = list(); idrr_noqtc = list(); 
-        nirr_art = list(); nirr_awt = list(); nirr_cs = list(); nirr_noqtc = list(); 
-
-        for x in number_of_tasks:
-            [idrr_results, cs, noqtc] = IDRR(task_dataset[n][N_tasks-int(x):])
-            [art, awt, att] = calculate_results('IDRR', idrr_results, cs, noqtc, print_by_task=False)
-            idrr_art.append(art); idrr_awt.append(awt); idrr_cs.append(cs); idrr_noqtc.append(noqtc) 
-
-            [nirr_results, cs, noqtc] = NIRR(task_dataset[n][N_tasks-int(x):])
-            [art, awt, att] = calculate_results('NIRR', nirr_results, cs, noqtc, print_by_task=False)
-            nirr_art.append(art); nirr_awt.append(awt); nirr_cs.append(cs); nirr_noqtc.append(noqtc) 
-
-        IDRR_art.append(idrr_art); IDRR_awt.append(idrr_awt); IDRR_cs.append(idrr_cs); IDRR_noqtc.append(idrr_noqtc)
-        NIRR_art.append(nirr_art); NIRR_awt.append(nirr_awt); NIRR_cs.append(nirr_cs); NIRR_noqtc.append(nirr_noqtc)
-
-    if (IDRR_to_txt):
-        fid = open('IDRR_results.txt', 'w')
-        print('SIM. N|ART      |AWT      |CS       |NOQTC    ', file=fid)
-        for n in range(0, N_repetitions):
-            for i in range(int(N_tasks/interval)):
-                print('%5d |%8.2f |%8.2f |%8.2f |%8.2f' % (n, IDRR_art[n][i], IDRR_awt[n][i], IDRR_cs[n][i], IDRR_noqtc[n][i]), file=fid)
-        fid.close() 
-    
-    if (NIRR_to_txt):
-        fid = open('NIRR_results.txt', 'w')
-        print('SIM. N|ART      |AWT      |CS       |NOQTC    ', file=fid)
-        for n in range(0, N_repetitions):    
-            for i in range(int(N_tasks/interval)):
-                print('%5d |%8.2f |%8.2f |%8.2f |%8.2f' % (n, NIRR_art[n][i], NIRR_awt[n][i], NIRR_cs[n][i], NIRR_noqtc[n][i]), file=fid)
-        fid.close() 
-
-    if plot_ART:
-        fig1 = plt.figure(1)
-        for n in range(0, N_repetitions):
-            if n == 0:
-                plt.plot(number_of_tasks, IDRR_art[n], 'b--', label='IDRR - ART', linewidth=2)
-                plt.plot(number_of_tasks, NIRR_art[n], 'k--', label='NIRR - ART', linewidth=2)
-            else:
-                plt.plot(number_of_tasks, IDRR_art[n], 'b--', linewidth=2)
-                plt.plot(number_of_tasks, NIRR_art[n], 'k--', linewidth=2)
-        plt.legend()
-        plt.title("IDRR vs. NIRR")
-        plt.xlabel('Number of tasks')
-        plt.ylabel('ART')
-        plt.savefig('ART.png')
-        plt.close()
-    
-    if plot_AWT:
-        for n in range(0, N_repetitions):
-            if n == 0:
-                plt.plot(number_of_tasks, IDRR_awt[n], 'b--', label='IDRR - AWT', linewidth=2)
-                plt.plot(number_of_tasks, NIRR_awt[n], 'k--', label='NIRR - AWT', linewidth=2)
-            else:
-                plt.plot(number_of_tasks, IDRR_awt[n], 'b--', linewidth=2)
-                plt.plot(number_of_tasks, NIRR_awt[n], 'k--', linewidth=2)
-        plt.legend()
-        plt.title("IDRR vs. NIRR")
-        plt.xlabel('Number of tasks')
-        plt.ylabel('AWT')
-        plt.savefig('AWT.png')
-        plt.close()
-
-    if plot_CS:
-        for n in range(0, N_repetitions):  
-            if n == 0:
-                plt.plot(number_of_tasks, IDRR_cs[n], 'b--', label='IDRR - CS', linewidth=2)
-                plt.plot(number_of_tasks, NIRR_cs[n], 'k--', label='NIRR - CS', linewidth=2)
-            else:
-                plt.plot(number_of_tasks, IDRR_cs[n], 'b--', linewidth=2)
-                plt.plot(number_of_tasks, NIRR_cs[n], 'k--', linewidth=2)    
-        plt.legend()
-        plt.title("IDRR vs. NIRR")
-        plt.xlabel('Number of tasks')
-        plt.ylabel('CS')
-        plt.savefig('CS.png')
-        plt.close()
-    
-    if plot_NOQTC:
-        ylim_max = 0
-        for n in range(0, N_repetitions):
-            ylim_max = max(ylim_max, max(IDRR_noqtc[n]))
-            if n == 0:
-                plt.plot(number_of_tasks, IDRR_noqtc[n], 'b--', label='IDRR - NOQTC', linewidth=2)
-                plt.plot(number_of_tasks, NIRR_noqtc[n], 'k--', label='NIRR - NOQTC', linewidth=2)
-            else:
-                plt.plot(number_of_tasks, IDRR_noqtc[n], 'b--', linewidth=2)
-                plt.plot(number_of_tasks, NIRR_noqtc[n], 'k--', linewidth=2)    
-        plt.ylim([0, ylim_max+5])
-        plt.legend()
-        plt.title("IDRR vs. NIRR")
-        plt.xlabel('Number of tasks')
-        plt.ylabel('NOQTC')
-        plt.savefig('NOQTC.png')
-        plt.close()
-    
-    time_end = time()
-    print(f'Simulation finished in {time_end - time_start:.2f} seconds!!')
-    
-    
