@@ -1,7 +1,9 @@
 from copy import deepcopy
-from logging import exception
 
 def IDRR(dataset: list):
+    """
+    Implementation of the IDRR algorithm as described in the report.
+    """
     task_dataset = deepcopy(dataset)
     REQUEST_QUEUE = list()
     DONE_LIST = list()

@@ -2,6 +2,9 @@ from copy import deepcopy
 import numpy as np
 
 def NIRR(dataset: list):
+    """
+    Implementation of the NIRR algorithm as described in the report.
+    """
     task_dataset = deepcopy(dataset)
     ARRIVE_QUEUE = list()
     REQUEST_QUEUE = list()

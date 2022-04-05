@@ -55,7 +55,6 @@ def simulate(N_simulations: int, N_tasks: int, interval: int, arrival_time_bound
     it takes ~80 seonds... To make absolutely sure that the results are corrct the algorithms are reapplied on all the task every interval. 
     So with an interval of 10, first the algorithm run on task 0-10, then on 0-20, then on 0-30, ..., 0-N_tasks. This causes the large complexity,
     but I argue that all relevant results can be achieved within seconds anyway, so just be careful with the input parameters. 
-
     """
     time_start = time()
     print(f'Starting {N_simulations} simulation(s), with {N_tasks} tasks each, evaluated at every {interval} number of tasks.')
