@@ -1,4 +1,4 @@
-from random import random
+import numpy as np
 
 class Task:
     """
@@ -51,7 +51,7 @@ class Task:
         self.finish_time = time
         self.calculate_results()
 
-def generate_dataset(N_simulations: int, N_tasks: int, ART_bound: list, BT_bound: list) -> list:
+def generate_dataset(N_simulations: int, N_tasks: int, ART_bound: list, BT_bound: list, uniform=True, normal=False) -> list:
     """
     This function generates the dataset, which will be a list of the class Tasks. 
     It takes the number of simulations, number of tasks, and the arrival time burst time bounds 
@@ -64,13 +64,17 @@ def generate_dataset(N_simulations: int, N_tasks: int, ART_bound: list, BT_bound
         arrival_times = list()
         tasks_n = list()
         for _ in range(N_tasks):
-            arrival_times.append(round(random()*(ART_bound[1] - ART_bound[0]) + ART_bound[0]))
+            arrival_times.append(int(np.random.uniform(ART_bound[0], ART_bound[1])))
         arrival_times.sort(reverse=True)
 
         arrival_times[N_tasks-1] = 0 # Need to force this 
 
         for art, i in zip(arrival_times, range(N_tasks)):
-            bt = round(random()*(BT_bound[1] - BT_bound[0]) + BT_bound[0])
+            if uniform:
+                bt = int(np.random.uniform(BT_bound[0], BT_bound[1]))
+            elif normal:
+                bt  = np.random.default_rng().normal(loc=int(np.mean(BT_bound)), scale=int(1/4*(BT_bound[1] - BT_bound[0])))
+                bt = round(max(bt, 0))
             tasks_n.append(Task(N_tasks-i, art, bt))
         OUTPUT.append(tasks_n)
         

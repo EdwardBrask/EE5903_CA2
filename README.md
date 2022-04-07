@@ -18,6 +18,10 @@ Running instructions
         
         burst_time_bounds (list(lower (int), upper (int))): The upper and lower bound in which the burst times will be uniformly   distributed. Recommended range, lower - [0 - 0], upper - [0, 50]
 
+        uniform (bool): Indicating if the burst times should be uniformly distributed generated within the specified bounds.
+
+        normal (bool): Indicating if the burst times should be normally distributed, with of mean of = 1/2*(upper - lower),and a standard deviation 1/4*(upper - lower) of the burst time bounds.
+
         IDRR_to_txt (bool): Decides if the results at every interval should be saved to a .txt file, located in the 'numerical results' folder for the IDRR algorithm. 
 
         NIRR_to_txt (bool): Decides if the results at every interval should be saved to a .txt file, located in the 'numerical results' folder for the NIRR algorithm. 
@@ -31,11 +35,10 @@ Running instructions
 
     OBS 1!! The IDRR algorithm can compute a QT that is zero, the code will then throw 'ValueError: [IDRR] QT calculated to: 0.0'.
     This is an obvious flaw of the algorithm, and the simulation would be stuck in an infinite loop if allowed to continue. 
-    Hence the program terminates and should be re-simulated. This can happen randomly even with reasonable input parameters, 
-    with 'N_simulations  = 3', 'N_tasks = 500', 'arrival_time_bounds = [0, 10]' and 'burst_time_bounds = [1, 50]' it happens 
-    roughly once every ten times. 
+    Hence the program terminates and should be re-simulated. This only happened to me if the upper bound of the arrival time is close to the upper bound of the burst time. With 'N_simulations  = 5', 'N_tasks = 500', 'arrival_time_bounds = [0, 35]', 
+    'burst_time_bounds = [1, 50]' and uniform=True it happens roughly once every 1000 times. 
 
     OBS 2!! The complexity of this whole simulation is very large, roughly around O(N_simulations * N_tasks^4). 
-    On my machine, a 2020 Macbook Pro M1, with 'N_simulations = 3', 'N_tasks = 500' and 'interval = 10', 
-    it takes ~1.5 seconds to run the whole program. But with 'N_simulations = 10', 'N_tasks = 1000' and 'interval = 10',
+    On my machine, a 2020 Macbook Pro M1, with 'N_simulations = 5', 'N_tasks = 500' and 'interval = 10', 
+    it takes ~2 seconds to run the whole program. But with 'N_simulations = 10', 'N_tasks = 1000' and 'interval = 10',
     it takes ~80 seonds... To make absolutely sure that the results are corrct the algorithms are reapplied on all the task every interval. So with an interval of 10, first the algorithm run on task 0-10, then on 0-20, then on 0-30, ..., 0-N_tasks. This causes the large complexity, but I argue that all relevant results can be achieved within seconds anyway, so just be careful with the input parameters. 

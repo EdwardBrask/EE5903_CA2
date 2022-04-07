@@ -8,7 +8,7 @@ from helper_scripts import generate_dataset, calculate_results
 from algo_1 import IDRR
 from algo_2 import NIRR
 
-def simulate(N_simulations: int, N_tasks: int, interval: int, arrival_time_bounds: list, burst_time_bounds: list,
+def simulate(N_simulations: int, N_tasks: int, interval: int, arrival_time_bounds: list, burst_time_bounds: list, uniform=True, normal=False,
         IDRR_to_txt=True, NIRR_to_txt=True, plot_ART=True, plot_AWT=True, plot_CS=True, plot_NOQTC=True):
     """
     This function is the main function of the simulation code. It takes the dataset generated earlier and runs both algorithms, 
@@ -28,6 +28,11 @@ def simulate(N_simulations: int, N_tasks: int, interval: int, arrival_time_bound
         
         burst_time_bounds (list(lower (int), upper (int))): The upper and lower bound in which the burst times will be uniformly distributed. 
             Recommended range, lower - [0 - 0], upper - [0, 50]
+        
+        uniform (bool): Indicating if the burst times should be uniformly distributed generated within the specified bounds.
+
+        normal (bool): Indicating if the burst times should be normally distributed, with of mean of = 1/2*(upper - lower),
+            and a standard deviation 1/4*(upper - lower) of the burst time bounds.
 
         IDRR_to_txt (bool): Decides if the results at every interval should be saved to a .txt file, 
             located in the 'numerical results' folder for the IDRR algorithm. 
@@ -45,13 +50,13 @@ def simulate(N_simulations: int, N_tasks: int, interval: int, arrival_time_bound
 
     OBS 1!! The IDRR algorithm can compute a QT that is zero, the code will then throw 'ValueError: [IDRR] QT calculated to: 0.0'.
     This is an obvious flaw of the algorithm, and the simulation would be stuck in an infinite loop if allowed to continue. 
-    Hence the program terminates and should be re-simulated. This can happen randomly even with reasonable input parameters, 
-    with 'N_simulations  = 3', 'N_tasks = 500', 'arrival_time_bounds = [0, 10]' and 'burst_time_bounds = [1, 50]' it happens 
-    roughly once every ten times. 
+    Hence the program terminates and should be re-simulated. This only happened to me if the upper bound of the arrival time is close
+    to the upper bound of the burst time. With 'N_simulations  = 5', 'N_tasks = 500', 'arrival_time_bounds = [0, 35]', 
+    'burst_time_bounds = [1, 50]' and uniform=True it happens roughly once every 1000 times. 
 
     OBS 2!! The complexity of this whole simulation is very large, roughly around O(N_simulations * N_tasks^4). 
-    On my machine, a 2020 Macbook Pro M1, with 'N_simulations = 3', 'N_tasks = 500' and 'interval = 10', 
-    it takes ~1.5 seconds to run the whole program. But with 'N_simulations = 10', 'N_tasks = 1000' and 'interval = 10',
+    On my machine, a 2020 Macbook Pro M1, with 'N_simulations = 5', 'N_tasks = 500' and 'interval = 10', 
+    it takes ~2 seconds to run the whole program. But with 'N_simulations = 10', 'N_tasks = 1000' and 'interval = 10',
     it takes ~80 seonds... To make absolutely sure that the results are corrct the algorithms are reapplied on all the task every interval. 
     So with an interval of 10, first the algorithm run on task 0-10, then on 0-20, then on 0-30, ..., 0-N_tasks. This causes the large complexity,
     but I argue that all relevant results can be achieved within seconds anyway, so just be careful with the input parameters. 
@@ -59,8 +64,11 @@ def simulate(N_simulations: int, N_tasks: int, interval: int, arrival_time_bound
     time_start = time()
     print(f'Starting {N_simulations} simulation(s), with {N_tasks} tasks each, evaluated at every {interval} number of tasks.')
     
+    if (uniform and normal) or (not uniform and not normal):
+        raise InterruptedError("Choose either uniform or normal!!")
+
     # Generate the dataset 
-    task_dataset = generate_dataset(N_simulations, N_tasks, arrival_time_bounds, burst_time_bounds) 
+    task_dataset = generate_dataset(N_simulations, N_tasks, arrival_time_bounds, burst_time_bounds, uniform, normal) 
 
     plt.rcParams.update({'font.size': 16}) # Change fontsize on the plots 
     plots_path = os.path.join(current_path, 'plots')
@@ -109,8 +117,13 @@ def simulate(N_simulations: int, N_tasks: int, interval: int, arrival_time_bound
         fid.close() 
 
     # Plot the results to .png files saved in the folder 'plots'
+
+    if uniform:
+        main_string = f'Ar_t = Uniform[{arrival_time_bounds[0]}, {arrival_time_bounds[1]}], B_t = Uniform[{burst_time_bounds[0]}, {burst_time_bounds[1]}]'
+    elif normal:
+        main_string = f'Ar_t = Uniform[{arrival_time_bounds[0]}, {arrival_time_bounds[1]}], B_t = Normal({int(np.mean(burst_time_bounds))}, {int(1/4*(burst_time_bounds[1] - burst_time_bounds[0]))})'
+    
     if plot_ART:
-        fig1 = plt.figure(1)
         for n in range(0, N_simulations):
             if n == 0:
                 plt.plot(number_of_tasks, IDRR_ART[n], 'b--', label='IDRR - ART', linewidth=2)
@@ -119,10 +132,10 @@ def simulate(N_simulations: int, N_tasks: int, interval: int, arrival_time_bound
                 plt.plot(number_of_tasks, IDRR_ART[n], 'b--', linewidth=2)
                 plt.plot(number_of_tasks, NIRR_ART[n], 'k--', linewidth=2)
         plt.legend()
-        plt.title(f'Ar_t = [{arrival_time_bounds[0]}, {arrival_time_bounds[1]}], B_t = [{burst_time_bounds[0]}, {burst_time_bounds[1]}]')
+        plt.title(main_string)
         plt.xlabel('Number of tasks')
         plt.ylabel('ART')
-        plt.savefig(os.path.join(plots_path, 'ART_3.png'), bbox_inches='tight')
+        plt.savefig(os.path.join(plots_path, 'ART.png'), bbox_inches='tight')
         plt.close()
     
     if plot_AWT:
@@ -134,10 +147,10 @@ def simulate(N_simulations: int, N_tasks: int, interval: int, arrival_time_bound
                 plt.plot(number_of_tasks, IDRR_AWT[n], 'b--', linewidth=2)
                 plt.plot(number_of_tasks, NIRR_AWT[n], 'k--', linewidth=2)
         plt.legend()
-        plt.title(f'Ar_t = [{arrival_time_bounds[0]}, {arrival_time_bounds[1]}], B_t = [{burst_time_bounds[0]}, {burst_time_bounds[1]}]')
+        plt.title(main_string)
         plt.xlabel('Number of tasks')
         plt.ylabel('AWT')
-        plt.savefig(os.path.join(plots_path, 'AWT_3.png'), bbox_inches='tight')
+        plt.savefig(os.path.join(plots_path, 'AWT.png'), bbox_inches='tight')
         plt.close()
 
     if plot_CS:
@@ -149,10 +162,10 @@ def simulate(N_simulations: int, N_tasks: int, interval: int, arrival_time_bound
                 plt.plot(number_of_tasks, IDRR_CS[n], 'b--', linewidth=2)
                 plt.plot(number_of_tasks, NIRR_CS[n], 'k--', linewidth=2)    
         plt.legend()
-        plt.title(f'Ar_t = [{arrival_time_bounds[0]}, {arrival_time_bounds[1]}], B_t = [{burst_time_bounds[0]}, {burst_time_bounds[1]}]')
+        plt.title(main_string)
         plt.xlabel('Number of tasks')
         plt.ylabel('CS')
-        plt.savefig(os.path.join(plots_path, 'CS_3.png'), bbox_inches='tight')
+        plt.savefig(os.path.join(plots_path, 'CS.png'), bbox_inches='tight')
         plt.close()
     
     if plot_NOQTC:
@@ -167,10 +180,10 @@ def simulate(N_simulations: int, N_tasks: int, interval: int, arrival_time_bound
                 plt.plot(number_of_tasks, NIRR_NOQTC[n], 'k--', linewidth=2)    
         plt.ylim([0, ylim_max+3])
         plt.legend(loc = 'upper left')
-        plt.title(f'Ar_t = [{arrival_time_bounds[0]}, {arrival_time_bounds[1]}], B_t = [{burst_time_bounds[0]}, {burst_time_bounds[1]}]')
+        plt.title(main_string)
         plt.xlabel('Number of tasks')
         plt.ylabel('NOQTC')
-        plt.savefig(os.path.join(plots_path, 'NOQTC_3.png'), bbox_inches='tight')
+        plt.savefig(os.path.join(plots_path, 'NOQTC.png'), bbox_inches='tight')
         plt.close()
     
     time_end = time()
