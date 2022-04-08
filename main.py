@@ -17,6 +17,5 @@ plot_ART=True; plot_AWT=True; plot_CS=True; plot_NOQTC=True # Plot the results
 # ------------- CHANGE INPUT HERE -------------
 
 if __name__ == "__main__":
-    while True:
-        simulate(N_simulations, N_tasks, interval, arrival_time_bounds, burst_time_bounds, uniform, normal,
-            IDRR_to_txt, NIRR_to_txt, plot_ART, plot_AWT, plot_CS, plot_NOQTC)
+    simulate(N_simulations, N_tasks, interval, arrival_time_bounds, burst_time_bounds, uniform, normal,
+        IDRR_to_txt, NIRR_to_txt, plot_ART, plot_AWT, plot_CS, plot_NOQTC)
