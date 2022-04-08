@@ -8,7 +8,7 @@ interval = 10 # Which interval should be used to calculate the results? Recommen
 
 # Task generation
 # Should be noted here that the IDRR algorithm can generate a quantum time = 0, then the code throws an ValueError and terminates.
-arrival_time_bounds = [0, 10]; burst_time_bounds = [1, 50] # In which interval should the arrival times and burst times be generated? 
+arrival_time_bounds = [0, 30]; burst_time_bounds = [1, 50] # In which interval should the arrival times and burst times be generated? 
 uniform=True; normal=False # How should the burst times be distributed 
 
 # Output forms 
@@ -17,5 +17,6 @@ plot_ART=True; plot_AWT=True; plot_CS=True; plot_NOQTC=True # Plot the results
 # ------------- CHANGE INPUT HERE -------------
 
 if __name__ == "__main__":
-    simulate(N_simulations, N_tasks, interval, arrival_time_bounds, burst_time_bounds, uniform, normal,
-        IDRR_to_txt, NIRR_to_txt, plot_ART, plot_AWT, plot_CS, plot_NOQTC)
+    while True:
+        simulate(N_simulations, N_tasks, interval, arrival_time_bounds, burst_time_bounds, uniform, normal,
+            IDRR_to_txt, NIRR_to_txt, plot_ART, plot_AWT, plot_CS, plot_NOQTC)
